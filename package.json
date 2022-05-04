@@ -3,6 +3,15 @@
   "version": "1.0.0",
   "description": "Interpolate between defined colors in Tailwind config for additional color stops",
   "main": "index.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -11,6 +20,8 @@
     "url": "git+https://github.com/brandonmcconnell/tailwind-lerp-colors.git"
   },
   "keywords": [
+    "tailwind",
+    "plugin",
     "color",
     "interpolation",
     "functions",
@@ -28,5 +39,9 @@
   "bugs": {
     "url": "https://github.com/brandonmcconnell/tailwind-lerp-colors/issues"
   },
-  "homepage": "https://github.com/brandonmcconnell/tailwind-lerp-colors#readme"
+  "homepage": "https://github.com/brandonmcconnell/tailwind-lerp-colors#readme",
+  "devDependencies": {
+    "chroma-js": "^2.4.2",
+    "tailwindcss": "^3.0.24"
+  }
 }
