@@ -1,9 +1,9 @@
 const chroma = require('chroma-js');
 const plugin = require('tailwindcss/plugin');
 
-const defaultParamValue = {
-  interval: 4,
+const defaultOptions = {
   includeEnds: true,
+  interval: 4,
   mode: 'rgb',
 };
 
@@ -29,17 +29,13 @@ const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
 const finalColors = [];
 
 const interpolateColors = plugin.withOptions(
-  (options = defaultParamValue) => (
+  (options = defaultOptions) => (
     function ({ theme }) {
-      const { interval } = typeof options?.interval === 'number'
-        ? options
-        : defaultParamValue;
-      const { includeEnds } = typeof options?.interval === 'boolean'
-        ? options
-        : defaultParamValue;
-      const { mode } = validColorModes.includes(options?.mode)
-        ? options
-        : defaultParamValue;
+      const {
+        includeEnds = defaultOptions.includeEnds,
+        interval = defaultOptions.interval,
+        mode = defaultOptions.mode,
+      } = options ?? defaultOptions;
       const initialColors = Object.entries(theme('colors'));
 
       for (const [name, shades] of initialColors) {
@@ -97,7 +93,7 @@ const interpolateColors = plugin.withOptions(
         finalColors.push([name, finalShades]);
       }
     }
-  ), (options = defaultParamValue) => (
+  ), () => (
     {
       theme: {
         colors: finalColors
