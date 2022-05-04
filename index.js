@@ -80,12 +80,12 @@ const interpolateColors = plugin.withOptions(
             !Number.isInteger(interpolations)
           ) continue;
 
-          const scale = chroma.scale([color, nextColor]);
+          const getColorAt = chroma.scale([color, nextColor]).mode(mode);
           for (let run = 1; run <= interpolations; run++) {
             const percent = run / (interpolations + 1);
             finalShades.push([
               shade + (interval * run),
-              scale([color, nextColor]).mode(mode)(percent)
+              getColorAt(percent)
             ]);
           }
         }
