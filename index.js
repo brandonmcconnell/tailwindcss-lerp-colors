@@ -31,6 +31,20 @@ const finalColors = [];
 const interpolateColors = plugin.withOptions(
   (options = defaultOptions) => (
     function ({ theme }) {
+      if (options !== defaultOptions) {
+        if (typeof options?.includeEnds !== 'boolean') {
+          throw new Error('tailwind-lerp-colors option `includeEnds` must be a boolean.');
+        }
+        if (
+          typeof options?.interval !== 'number' ||
+          !Number.isInteger(options.interval)
+        ) {
+          throw new Error('tailwind-lerp-colors option `interval` must be a positive integer.');
+        }
+        if (!validColorModes.includes(options?.mode)) {
+          throw new Error(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.map(modeName => '`modeName`').join(', ')}.`);
+        }
+      }
       const {
         includeEnds = defaultOptions.includeEnds,
         interval = defaultOptions.interval,
