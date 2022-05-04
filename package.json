@@ -1,6 +1,6 @@
 {
   "name": "tailwind-lerp-colors",
-  "version": "1.0.3",
+  "version": "1.0.5",
   "description": "Interpolate between defined colors in Tailwind config for additional color stops",
   "main": "index.js",
   "publishConfig": {
@@ -41,6 +41,7 @@
   },
   "homepage": "https://github.com/brandonmcconnell/tailwind-lerp-colors#readme",
   "dependencies": {
-    "chroma-js": "^2.4.2"
+    "chroma-js": "^2.4.2",
+    "tailwindcss": "^3.0.2"
   }
 }
