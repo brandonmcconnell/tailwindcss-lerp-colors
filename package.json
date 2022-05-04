@@ -1,0 +1,32 @@
+{
+  "name": "tailwind-lerp-colors",
+  "version": "1.0.0",
+  "description": "Interpolate between defined colors in Tailwind config for additional color stops",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/brandonmcconnell/tailwind-lerp-colors.git"
+  },
+  "keywords": [
+    "color",
+    "interpolation",
+    "functions",
+    "linear",
+    "interpolate-colors",
+    "chroma",
+    "color-space",
+    "color-modes",
+    "interpolate",
+    "color-spaces",
+    "color-mode"
+  ],
+  "author": "Brandon McConnell",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/brandonmcconnell/tailwind-lerp-colors/issues"
+  },
+  "homepage": "https://github.com/brandonmcconnell/tailwind-lerp-colors#readme"
+}
