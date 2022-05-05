@@ -1,25 +1,18 @@
 const chroma = require('chroma-js');
 const plugin = require('tailwindcss/plugin');
+const baseColors = require('tailwindcss/colors');
 
 const defaultOptions = {
+  includeBaseColors: false,
   includeEnds: true,
   interval: 25,
   mode: 'rgb',
 };
 
 const validColorModes = [
-  'rgb',
-  'lrgb',
-  'lab',
-  'lch',
-  'hcl',
-  'num',
-  'hcg',
-  'hsi',
-  'hsl',
-  'hsv',
-  'oklab',
-  'oklch'
+  'rgb', 'lab', 'lch', 'lrgb',
+  'hcl', 'num', 'hcg', 'oklch',
+  'hsi', 'hsl', 'hsv', 'oklab',
 ];
 
 const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
@@ -32,25 +25,46 @@ const interpolateColors = plugin.withOptions(
   (options = defaultOptions) => (
     function ({ theme }) {
       if (options !== defaultOptions) {
-        if (typeof options?.includeEnds !== 'boolean') {
+        if (
+          options &&
+          options.hasOwnProperty('includeBaseColors') &&
+          typeof options?.includeBaseColors !== 'boolean'
+        ) {
+          throw new Error('tailwind-lerp-colors option `includeBaseColors` must be a boolean.');
+        }
+        if (
+          options &&
+          options.hasOwnProperty('includeEnds') &&
+          typeof options?.includeEnds !== 'boolean'
+        ) {
           throw new Error('tailwind-lerp-colors option `includeEnds` must be a boolean.');
         }
         if (
-          typeof options?.interval !== 'number' ||
-          !Number.isInteger(options.interval)
+          options &&
+          options.hasOwnProperty('interval') &&
+          (
+            typeof options?.interval !== 'number' ||
+            !Number.isInteger(options.interval)
+          )
         ) {
           throw new Error('tailwind-lerp-colors option `interval` must be a positive integer.');
         }
-        if (!validColorModes.includes(options?.mode)) {
+        if (
+          options &&
+          options.hasOwnProperty('mode') &&
+          !validColorModes.includes(options?.mode)
+        ) {
           throw new Error(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.map(modeName => '`modeName`').join(', ')}.`);
         }
       }
-      const {
-        includeEnds = defaultOptions.includeEnds,
-        interval = defaultOptions.interval,
-        mode = defaultOptions.mode,
-      } = options ?? defaultOptions;
-      const initialColors = Object.entries(theme('colors'));
+      const { includeBaseColors, includeEnds, interval, mode } = {
+        ...defaultOptions,
+        ...options,
+      };
+      const initialColors = Object.entries({
+        ...(includeBaseColors ? baseColors : {}),
+        ...theme('colors'),
+      });
 
       for (const [name, shades] of initialColors) {
         if (
@@ -59,6 +73,7 @@ const interpolateColors = plugin.withOptions(
         ) {
           continue;
         }
+        finalColors[name] = shades;
         if (
           typeof shades === 'string' ||
           Array.isArray(shades) ||
@@ -67,7 +82,6 @@ const interpolateColors = plugin.withOptions(
             return !isNaN(key);
           })
         ) {
-          finalColors[name] = shades;
           continue;
         }
         const shadesArray = (
@@ -112,9 +126,7 @@ const interpolateColors = plugin.withOptions(
     {
       theme: {
         extend: {
-          colors: {
-            ...finalColors
-          }
+          colors: finalColors
         }
       }
     }
