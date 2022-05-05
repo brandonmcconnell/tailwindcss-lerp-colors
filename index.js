@@ -3,7 +3,7 @@ const plugin = require('tailwindcss/plugin');
 
 const defaultOptions = {
   includeEnds: true,
-  interval: 4,
+  interval: 25,
   mode: 'rgb',
 };
 
@@ -26,7 +26,7 @@ const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
   return numericKeyA - numericKeyB;
 };
 
-const finalColors = [];
+const finalColors = {};
 
 const interpolateColors = plugin.withOptions(
   (options = defaultOptions) => (
@@ -67,7 +67,7 @@ const interpolateColors = plugin.withOptions(
             return !isNaN(key);
           })
         ) {
-          finalColors.push([name, shades]);
+          finalColors[name] = shades;
           continue;
         }
         const shadesArray = (
@@ -86,7 +86,7 @@ const interpolateColors = plugin.withOptions(
           const [shade, color] = shadesArray[i];
           const [nextShade, nextColor] = shadesArray[i + 1];
 
-          // check to make sure both shades being compared
+          // check to make sure both shades being compared	
           // are evenly divisible by the set interval
           let interpolations = (nextShade - shade) / interval - 1;
           if (
@@ -94,7 +94,8 @@ const interpolateColors = plugin.withOptions(
             !Number.isInteger(interpolations)
           ) continue;
 
-          const getColorAt = chroma.scale([color, nextColor]).mode(mode);
+          const scale = chroma.scale([color, nextColor]).mode(mode);
+          const getColorAt = percent => scale(percent).hex();
           for (let run = 1; run <= interpolations; run++) {
             const percent = run / (interpolations + 1);
             finalShades.push([
@@ -104,14 +105,18 @@ const interpolateColors = plugin.withOptions(
           }
         }
         finalShades.sort(sortByNumericFirstIndex);
-        finalColors.push([name, finalShades]);
+        finalColors[name] = Object.fromEntries(finalShades)
       }
     }
   ), () => (
     {
       theme: {
-        colors: finalColors
-      },
+        extend: {
+          colors: {
+            ...finalColors
+          }
+        }
+      }
     }
   )
 );
