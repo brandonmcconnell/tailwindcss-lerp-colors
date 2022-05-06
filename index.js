@@ -3,7 +3,7 @@ const plugin = require('tailwindcss/plugin');
 const baseColors = require('tailwindcss/colors');
 
 const defaultOptions = {
-  includeBaseColors: false,
+  includeBaseColors: true,
   includeEnds: true,
   interval: 25,
   mode: 'rgb',
@@ -22,40 +22,24 @@ const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
 const finalColors = {};
 
 const interpolateColors = plugin.withOptions(
-  (options = defaultOptions) => (
-    function ({ theme }) {
-      if (options !== defaultOptions) {
-        if (
-          options &&
-          options.hasOwnProperty('includeBaseColors') &&
-          typeof options?.includeBaseColors !== 'boolean'
-        ) {
+  (options = defaultOptions) => {
+    const checkOptionValidity = (optionName, test) => {
+      return (
+        !options.hasOwnProperty(optionName) || typeof test === 'function'
+            ? test(options[optionName]) : typeof test === 'string'
+              ? typeof options[optionName] === test : !!test
+      );
+    }
+    return function ({ theme }) {
+      if (options && options !== defaultOptions) {
+        if (checkOptionValidity('includeBaseColors', 'boolean'))
           throw new Error('tailwind-lerp-colors option `includeBaseColors` must be a boolean.');
-        }
-        if (
-          options &&
-          options.hasOwnProperty('includeEnds') &&
-          typeof options?.includeEnds !== 'boolean'
-        ) {
+        if (checkOptionValidity('includeEnds', 'boolean'))
           throw new Error('tailwind-lerp-colors option `includeEnds` must be a boolean.');
-        }
-        if (
-          options &&
-          options.hasOwnProperty('interval') &&
-          (
-            typeof options?.interval !== 'number' ||
-            !Number.isInteger(options.interval)
-          )
-        ) {
+        if (checkOptionValidity('interval', v => !Number.isInteger(v)))
           throw new Error('tailwind-lerp-colors option `interval` must be a positive integer.');
-        }
-        if (
-          options &&
-          options.hasOwnProperty('mode') &&
-          !validColorModes.includes(options?.mode)
-        ) {
+        if (checkOptionValidity('mode'), v => !validColorModes.includes(v))
           throw new Error(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.map(modeName => '`modeName`').join(', ')}.`);
-        }
       }
       const { includeBaseColors, includeEnds, interval, mode } = {
         ...defaultOptions,
@@ -122,7 +106,7 @@ const interpolateColors = plugin.withOptions(
         finalColors[name] = Object.fromEntries(finalShades)
       }
     }
-  ), () => (
+  }, () => (
     {
       theme: {
         extend: {
