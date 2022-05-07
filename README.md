@@ -17,7 +17,7 @@
         <li><a href="#options-explained">Options explained</a></li>
       </ul>
     </a></li>
-    <li><a href="#future-development-roadmap">Future Development Roadmap</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
     <li><a href="#contributing">Contributing</a></li>
     <li><a href="#support">Support</a></li>
     <li><a href="#license">License</a></li>
@@ -122,7 +122,7 @@ Every option in the options object is entirely optional and falls back to its re
   * hsv
   * oklab
 
-## Future Development Roadmap
+## Roadmap
 I have a few improvements planned already, and I am always open to feature requests and bug reports.
 
 Here are some of the features I have planned:
