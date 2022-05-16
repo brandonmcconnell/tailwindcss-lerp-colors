@@ -2,33 +2,31 @@ const plugin = require('tailwindcss/plugin');
 
 const interpolateColors = plugin.withOptions(
   () => {}, (options = defaultOptions) => {
-    const chroma = require('chroma-js');
-    const baseColors = require('tailwindcss/colors');
-
-    const defaultOptions = {
-      includeBaseColors: true,
-      includeEnds: true,
-      interval: 25,
-      mode: 'rgb',
-    };
-
-    const validColorModes = [
-      'rgb', 'lab', 'lch', 'lrgb',
-      'hcl', 'num', 'hcg', 'oklch',
-      'hsi', 'hsl', 'hsv', 'oklab',
-    ];
-
-    const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
-      return numericKeyA - numericKeyB;
-    };
-
-    const finalColors = {};
-
-    const isOptionInvalid = (optionName, test) => {
-      return options.hasOwnProperty(optionName) && !test(options[optionName]);
-    }
-
     function generateLerpedColors({ theme }) {
+      const chroma = require('chroma-js');
+      const baseColors = require('tailwindcss/colors');
+  
+      const defaultOptions = {
+        includeBaseColors: true,
+        includeEnds: true,
+        interval: 25,
+        mode: 'rgb',
+      };
+  
+      const validColorModes = [
+        'rgb', 'lab', 'lch', 'lrgb',
+        'hcl', 'num', 'hcg', 'oklch',
+        'hsi', 'hsl', 'hsv', 'oklab',
+      ];
+  
+      const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
+        return numericKeyA - numericKeyB;
+      };
+  
+      const isOptionInvalid = (optionName, test) => {
+        return options.hasOwnProperty(optionName) && !test(options[optionName]);
+      }
+
       if (options && options !== defaultOptions) {
         if (isOptionInvalid('includeBaseColors', v => typeof v === 'boolean'))
           throw new Error('tailwind-lerp-colors option `includeBaseColors` must be a boolean.');
@@ -47,6 +45,8 @@ const interpolateColors = plugin.withOptions(
         ...(includeBaseColors ? baseColors : {}),
         ...theme('colors'),
       });
+  
+      const finalColors = {};
 
       for (const [name, shades] of initialColors) {
         if (
@@ -103,6 +103,8 @@ const interpolateColors = plugin.withOptions(
         finalShades.sort(sortByNumericFirstIndex);
         finalColors[name] = Object.fromEntries(finalShades)
       }
+
+      return finalColors;
     }
     
     return {
