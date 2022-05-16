@@ -1,7 +1,7 @@
 const plugin = require('tailwindcss/plugin');
 
 const interpolateColors = plugin.withOptions(
-  () => {}, (options = defaultOptions) => {
+  () => {}, (options = {}) => {
     function generateLerpedColors({ theme }) {
       const chroma = require('chroma-js');
       const baseColors = require('tailwindcss/colors');
@@ -27,23 +27,23 @@ const interpolateColors = plugin.withOptions(
         return options.hasOwnProperty(optionName) && !test(options[optionName]);
       }
 
-      if (options && options !== defaultOptions) {
-        if (isOptionInvalid('includeBaseColors', v => typeof v === 'boolean'))
-          throw new Error('tailwind-lerp-colors option `includeBaseColors` must be a boolean.');
-        if (isOptionInvalid('includeEnds', v => typeof v === 'boolean'))
-          throw new Error('tailwind-lerp-colors option `includeEnds` must be a boolean.');
-        if (isOptionInvalid('interval', v => Number.isInteger(v) && v > 0))
-          throw new Error('tailwind-lerp-colors option `interval` must be a positive integer greater than 0.');
-        if (isOptionInvalid('mode', v => validColorModes.includes(v)))
-          throw new Error(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.map(modeName => '`modeName`').join(', ')}.`);
-      }
+      if (isOptionInvalid('includeBaseColors', v => typeof v === 'boolean'))
+        throw new Error('tailwind-lerp-colors option `includeBaseColors` must be a boolean.');
+      if (isOptionInvalid('includeEnds', v => typeof v === 'boolean'))
+        throw new Error('tailwind-lerp-colors option `includeEnds` must be a boolean.');
+      if (isOptionInvalid('interval', v => Number.isInteger(v) && v > 0))
+        throw new Error('tailwind-lerp-colors option `interval` must be a positive integer greater than 0.');
+      if (isOptionInvalid('mode', v => validColorModes.includes(v)))
+        throw new Error(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.map(modeName => '`modeName`').join(', ')}.`);
+
       const { includeBaseColors, includeEnds, interval, mode } = {
         ...defaultOptions,
         ...options,
       };
       const initialColors = Object.entries({
         ...(includeBaseColors ? baseColors : {}),
-        ...theme('colors'),
+        ...theme.colors,
+        ...theme.extend.colors,
       });
   
       const finalColors = {};
