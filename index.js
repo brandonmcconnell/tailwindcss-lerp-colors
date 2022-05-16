@@ -1,32 +1,34 @@
-const chroma = require('chroma-js');
 const plugin = require('tailwindcss/plugin');
-const baseColors = require('tailwindcss/colors');
-
-const defaultOptions = {
-  includeBaseColors: true,
-  includeEnds: true,
-  interval: 25,
-  mode: 'rgb',
-};
-
-const validColorModes = [
-  'rgb', 'lab', 'lch', 'lrgb',
-  'hcl', 'num', 'hcg', 'oklch',
-  'hsi', 'hsl', 'hsv', 'oklab',
-];
-
-const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
-  return numericKeyA - numericKeyB;
-};
-
-const finalColors = {};
 
 const interpolateColors = plugin.withOptions(
-  (options = defaultOptions) => {
+  () => {}, (options = defaultOptions) => {
+    const chroma = require('chroma-js');
+    const baseColors = require('tailwindcss/colors');
+
+    const defaultOptions = {
+      includeBaseColors: true,
+      includeEnds: true,
+      interval: 25,
+      mode: 'rgb',
+    };
+
+    const validColorModes = [
+      'rgb', 'lab', 'lch', 'lrgb',
+      'hcl', 'num', 'hcg', 'oklch',
+      'hsi', 'hsl', 'hsv', 'oklab',
+    ];
+
+    const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
+      return numericKeyA - numericKeyB;
+    };
+
+    const finalColors = {};
+
     const isOptionInvalid = (optionName, test) => {
       return options.hasOwnProperty(optionName) && !test(options[optionName]);
     }
-    return function ({ theme }) {
+
+    function generateLerpedColors({ theme }) {
       if (options && options !== defaultOptions) {
         if (isOptionInvalid('includeBaseColors', v => typeof v === 'boolean'))
           throw new Error('tailwind-lerp-colors option `includeBaseColors` must be a boolean.');
@@ -102,15 +104,15 @@ const interpolateColors = plugin.withOptions(
         finalColors[name] = Object.fromEntries(finalShades)
       }
     }
-  }, () => (
-    {
+    
+    return {
       theme: {
         extend: {
-          colors: finalColors
+          colors: generateLerpedColors
         }
       }
-    }
-  )
+    };
+  }
 );
 
 module.exports = interpolateColors;
