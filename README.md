@@ -2,7 +2,7 @@
 
 <div align="center"><b>&#8220;Lerp&#8221;</b> = <b>(L)</b>inear Int<b>(erp)</b>olation</div><br />
 
-**Tailwind Lerp Colors** aids in the Tailwind config by programnatically interpolating between any default and extended colors in Tailwind config for additional color stops (e.g. `red-425`).
+**Tailwind Lerp Colors** programnatically interpolates between any default and extended colors in a Tailwind config for additional color stops (e.g. `red-425`, `gray-950`).
 
 <img src="https://dreamthinkbuild.com/tailwind-lerp-colors/tlc-readme-graphic.png" alt="" width="500" height="auto" /><br />
 
@@ -47,7 +47,7 @@ module.exports = {
 ```
 
 ## Usage
-`tailwind-lerp-colors` works out of the box without any required options, so if you're good with the default options, this should work for you:
+`tailwind-lerp-colors` works out of the box without any required options, so if you're good with the default options (listed below in the "Advanced usage" example), this should work for you:
 
 ### Simple usage:
 ```js
@@ -86,7 +86,7 @@ Every option in the options object is entirely optional and falls back to its re
   50, 100, 200, 300, 400, 500, 600, 700, 800, 900
   ```
 
-  If one of your colors used keys like the aqua example below (`0-9` rather than `50-900`), you would need to use an interval that divides evenly into those numeric keys, such as `0.25`.
+  If one of your colors uses keys like the aqua example below (`0-9` rather than `50-900`), you'll need to use an interval that divides evenly into those numeric keys, such as `0.25`.
   ```js
   aqua: {
     0: '#eefdf8',
