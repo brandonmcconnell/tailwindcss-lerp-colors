@@ -52,7 +52,7 @@ module.exports = {
       includeLegacy: false,
       lerpEnds: true,
       interval: 25,
-      mode: 'rgb',
+      mode: 'lrgb',
     })
   },
 }
@@ -85,7 +85,7 @@ theme: {
     includeLegacy: false,
     lerpEnds: true,
     interval: 25,
-    mode: 'rgb',
+    mode: 'lrgb',
   })
 }
 ```
@@ -105,9 +105,9 @@ Every option in the options object is entirely optional and falls back to its re
   
   ** *`includeBase` must be set to true in order for `includeLegacy` to work*
 
-* `includeEnds` (`boolean`) will include interpolation past the bounds of the colors included in the provided palette. For example, assuming a color `brown` is included in Tailwind config colors, where `brown-50` is the lightest shade and `brown-900` is the darkest shade, the function—when enabled—would interpolate between white (`#fff`) and `brown-50` and between black (`#000`) and `brown-900` to expose lighter and darker shades of every color than those included in the palette.
+* `lerpEnds` (`boolean`) will include interpolation past the bounds of the colors included in the provided palette. For example, assuming a color `brown` is included in Tailwind config colors, where `brown-50` is the lightest shade and `brown-900` is the darkest shade, the function—when enabled—would interpolate between white (`#fff`) and `brown-50` and between black (`#000`) and `brown-900` to expose lighter and darker shades of every color than those included in the palette.
 
-* `interval` (`number`, positive integer) sets the interval at which to interpolate colors. For example, with the default value of `25`, between `red-100` and `red-200`, it would interpolate the additional values `red-125`, `red-150`, and `red-175`. To include only the &#8220;halfway&#8221; values and not &#8220;quarter&#8221; values, you could pass an `interval` value of `50` which would only interpolate `red-150` between `red-100` and `red-200`. To interpolate every single value between each shade, you can pass a value of `1`, which would expose `red-101`, `red-102`, `red-103`, …, `red-899` per the default colors (including `red-0` and `red-1000` if `includeEnds` is enabled).
+* `interval` (`number`, positive integer) sets the interval at which to interpolate colors. For example, with the default value of `25`, between `red-100` and `red-200`, it would interpolate the additional values `red-125`, `red-150`, and `red-175`. To include only the &#8220;halfway&#8221; values and not &#8220;quarter&#8221; values, you could pass an `interval` value of `50` which would only interpolate `red-150` between `red-100` and `red-200`. To interpolate every single value between each shade, you can pass a value of `1`, which would expose `red-101`, `red-102`, `red-103`, …, `red-899` per the default colors (including `red-0` and `red-1000` if `lerpEnds` is enabled).
 
   It's important to note that each color's default intervals must be evenly divisible by the interval passed in this function, so it's recommended to use a naming convention similar to the one included in Tailwind by default:
   ```
@@ -137,18 +137,18 @@ Every option in the options object is entirely optional and falls back to its re
   What this means at a larger scale is you can create beautiful palettes of colors using as few as two colors and letting `tailwind-lerp-colors` do the heavy lifting, interpolating between them.
 
   The accepted values for mode are:
-  * rgb
-  * lab
-  * lch
-  * lrgb
-  * hcl
-  * num
-  * hcg
-  * oklch
-  * hsi
-  * hsl
-  * hsv
-  * oklab
+  * `lrgb` (default)
+  * `rgb`
+  * `lab`
+  * `lch`
+  * `hcl`
+  * `num`
+  * `hcg`
+  * `oklch`
+  * `hsi`
+  * `hsl`
+  * `hsv`
+  * `oklab`
 
 ## Roadmap
 I have a few improvements planned already, and I am always open to feature requests and bug reports.

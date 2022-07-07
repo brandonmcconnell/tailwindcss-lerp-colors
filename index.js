@@ -1,4 +1,4 @@
-const interpolateColors = (colorsObj, options = {}) => {
+const lerpColors = (colorsObj, options = {}) => {
   const chroma = require('chroma-js');
   const builtInColors = require('tailwindcss/colors');
   const legacyNames = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray'];
@@ -8,7 +8,7 @@ const interpolateColors = (colorsObj, options = {}) => {
     includeLegacy: false,
     lerpEnds: true,
     interval: 25,
-    mode: 'rgb',
+    mode: 'lrgb',
   };
 
   const validColorModes = [
@@ -29,8 +29,8 @@ const interpolateColors = (colorsObj, options = {}) => {
     throw new Error('tailwind-lerp-colors option `includeBase` must be a boolean.');
   if (isOptionInvalid('includeLegacy', v => typeof v === 'boolean'))
     throw new Error('tailwind-lerp-colors option `includeLegacy` must be a boolean.');
-  if (isOptionInvalid('includeEnds', v => typeof v === 'boolean'))
-    throw new Error('tailwind-lerp-colors option `includeEnds` must be a boolean.');
+  if (isOptionInvalid('lerpEnds', v => typeof v === 'boolean'))
+    throw new Error('tailwind-lerp-colors option `lerpEnds` must be a boolean.');
   if (isOptionInvalid('interval', v => Number.isInteger(v) && v > 0))
     throw new Error('tailwind-lerp-colors option `interval` must be a positive integer greater than 0.');
   if (isOptionInvalid('mode', v => validColorModes.includes(v)))
@@ -43,7 +43,7 @@ const interpolateColors = (colorsObj, options = {}) => {
       return [base, legacy];
     }, [{}, {}]
   );
-  const { includeBase, includeLegacy, includeEnds, interval, mode } = {
+  const { includeBase, includeLegacy, lerpEnds, interval, mode } = {
     ...defaultOptions,
     ...options,
   };
@@ -80,7 +80,7 @@ const interpolateColors = (colorsObj, options = {}) => {
         })
         .sort(sortByNumericFirstIndex)
     );
-    if (includeEnds) {
+    if (lerpEnds) {
       shadesArray.unshift([0, '#ffffff']);
       shadesArray.push([1000, '#000000']);
     }
@@ -114,4 +114,4 @@ const interpolateColors = (colorsObj, options = {}) => {
   return finalColors;
 };
 
-module.exports = interpolateColors;
+module.exports = lerpColors;
