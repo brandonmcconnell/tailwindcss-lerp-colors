@@ -36,20 +36,20 @@ const lerpColors = (colorsObj, options = {}) => {
   if (isOptionInvalid('mode', v => validColorModes.includes(v)))
     throw new Error(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.map(modeName => '`modeName`').join(', ')}.`);
 
-  const [baseColors, legacyColors] = Object.entries(builtInColors).reduce(
-    ([base, legacy], [name, values]) => {
-      if (legacyNames.includes(name)) legacy[name] = values;
-      else base[name] = values;
-      return [base, legacy];
-    }, [{}, {}]
-  );
   const { includeBase, includeLegacy, lerpEnds, interval, mode } = {
     ...defaultOptions,
     ...options,
   };
+  const baseColors = {};
+  if (includeBase) {
+    for (const key of Object.keys(builtInColors)) {
+      if (!legacyNames.includes(key) || includeLegacy) {
+        baseColors[key] = builtInColors[key];
+      }
+    }
+  }
   const initialColors = Object.entries({
-    ...(includeBase ? baseColors : {}),
-    ...(includeLegacy ? legacyColors : {}),
+    ...baseColors,
     ...colorsObj,
   });
 
