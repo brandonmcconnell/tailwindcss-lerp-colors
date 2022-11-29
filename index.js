@@ -1,40 +1,109 @@
-const lerpColors = (colorsObj, options = {}) => {
+const defaultLerpOptions = {
+  lerpEnds: true,
+  interval: 25,
+  mode: 'lrgb',
+};
+
+const validColorModes = [
+  'rgb', 'lab', 'lch', 'lrgb',
+  'hcl', 'num', 'hcg', 'oklch',
+  'hsi', 'hsl', 'hsv', 'oklab',
+];
+
+const isOptionInvalid = (options, optionName, test) => {
+  return options.hasOwnProperty(optionName) && !test(options[optionName]);
+};
+
+const throwError = message => {
+  throw new Error(message);
+};
+
+const lerpColor = (shades, options = {}) => {
   const chroma = require('chroma-js');
+
+  const defaultOptions = defaultLerpOptions;
+
+  if (isOptionInvalid(options, 'lerpEnds', v => typeof v === 'boolean'))
+    throwError('tailwind-lerp-colors option `lerpEnds` must be a boolean.');
+  if (isOptionInvalid(options, 'interval', v => Number.isInteger(v) && v > 0))
+    throwError('tailwind-lerp-colors option `interval` must be a positive integer greater than 0.');
+  if (isOptionInvalid(options, 'mode', v => validColorModes.includes(v)))
+    throwError(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.join(', ')}.`);
+
+  const { lerpEnds, interval, mode } = {
+    ...defaultOptions,
+    ...options,
+  };
+
+  const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
+    return numericKeyA - numericKeyB;
+  };
+
+  if (
+    ['null', 'undefined'].includes(typeof shades) ||
+    !shades.toString ||
+    typeof shades === 'string' ||
+    Array.isArray(shades) ||
+    shades.toString() !== '[object Object]' ||
+    !Object.keys(shades).every(key => {
+      return !isNaN(key);
+    })
+  ) {
+    throwError('tailwind-lerp-colors object `shades` must be an object with numeric keys.\n\nvalue used: ' + JSON.stringify(shades, null, 2));
+  }
+  const shadesArray = (
+    Object.entries(shades)
+      .map(([numericStringKey, color]) => {
+        return [Number(numericStringKey), color];
+      })
+      .sort(sortByNumericFirstIndex)
+  );
+  if (lerpEnds) {
+    shadesArray.unshift([0, '#ffffff']);
+    shadesArray.push([1000, '#000000']);
+  }
+  const finalShades = [...shadesArray];
+  for (let i = 0; i < shadesArray.length - 1; i++) {
+    const [shade, color] = shadesArray[i];
+    const [nextShade, nextColor] = shadesArray[i + 1];
+
+    // check to make sure both shades being compared	
+    // are evenly divisible by the set interval
+    let interpolations = (nextShade - shade) / interval - 1;
+    if (
+      interpolations <= 0 ||
+      !Number.isInteger(interpolations)
+    ) continue;
+
+    const scale = chroma.scale([color, nextColor]).mode(mode);
+    const getColorAt = percent => scale(percent).hex();
+    for (let run = 1; run <= interpolations; run++) {
+      const percent = run / (interpolations + 1);
+      finalShades.push([
+        shade + (interval * run),
+        getColorAt(percent)
+      ]);
+    }
+  }
+  finalShades.sort(sortByNumericFirstIndex);
+
+  return Object.fromEntries(finalShades);
+};
+
+const lerpColors = (colorsObj = {}, options = {}) => {
   const builtInColors = require('tailwindcss/colors');
   const legacyNames = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray'];
 
   const defaultOptions = {
     includeBase: true,
     includeLegacy: false,
-    lerpEnds: true,
-    interval: 25,
-    mode: 'lrgb',
+    ...defaultLerpOptions,
   };
 
-  const validColorModes = [
-    'rgb', 'lab', 'lch', 'lrgb',
-    'hcl', 'num', 'hcg', 'oklch',
-    'hsi', 'hsl', 'hsv', 'oklab',
-  ];
-
-  const sortByNumericFirstIndex = ([numericKeyA], [numericKeyB]) => {
-    return numericKeyA - numericKeyB;
-  };
-
-  const isOptionInvalid = (optionName, test) => {
-    return options.hasOwnProperty(optionName) && !test(options[optionName]);
-  }
-
-  if (isOptionInvalid('includeBase', v => typeof v === 'boolean'))
-    throw new Error('tailwind-lerp-colors option `includeBase` must be a boolean.');
-  if (isOptionInvalid('includeLegacy', v => typeof v === 'boolean'))
-    throw new Error('tailwind-lerp-colors option `includeLegacy` must be a boolean.');
-  if (isOptionInvalid('lerpEnds', v => typeof v === 'boolean'))
-    throw new Error('tailwind-lerp-colors option `lerpEnds` must be a boolean.');
-  if (isOptionInvalid('interval', v => Number.isInteger(v) && v > 0))
-    throw new Error('tailwind-lerp-colors option `interval` must be a positive integer greater than 0.');
-  if (isOptionInvalid('mode', v => validColorModes.includes(v)))
-    throw new Error(`tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.map(modeName => '`modeName`').join(', ')}.`);
+  if (isOptionInvalid(options, 'includeBase', v => typeof v === 'boolean'))
+    throwError('tailwind-lerp-colors option `includeBase` must be a boolean.');
+  if (isOptionInvalid(options, 'includeLegacy', v => typeof v === 'boolean'))
+    throwError('tailwind-lerp-colors option `includeLegacy` must be a boolean.');
 
   const { includeBase, includeLegacy, lerpEnds, interval, mode } = {
     ...defaultOptions,
@@ -73,45 +142,13 @@ const lerpColors = (colorsObj, options = {}) => {
     ) {
       continue;
     }
-    const shadesArray = (
-      Object.entries(shades)
-        .map(([numericStringKey, color]) => {
-          return [Number(numericStringKey), color];
-        })
-        .sort(sortByNumericFirstIndex)
-    );
-    if (lerpEnds) {
-      shadesArray.unshift([0, '#ffffff']);
-      shadesArray.push([1000, '#000000']);
-    }
-    const finalShades = [...shadesArray];
-    for (let i = 0; i < shadesArray.length - 1; i++) {
-      const [shade, color] = shadesArray[i];
-      const [nextShade, nextColor] = shadesArray[i + 1];
-
-      // check to make sure both shades being compared	
-      // are evenly divisible by the set interval
-      let interpolations = (nextShade - shade) / interval - 1;
-      if (
-        interpolations <= 0 ||
-        !Number.isInteger(interpolations)
-      ) continue;
-
-      const scale = chroma.scale([color, nextColor]).mode(mode);
-      const getColorAt = percent => scale(percent).hex();
-      for (let run = 1; run <= interpolations; run++) {
-        const percent = run / (interpolations + 1);
-        finalShades.push([
-          shade + (interval * run),
-          getColorAt(percent)
-        ]);
-      }
-    }
-    finalShades.sort(sortByNumericFirstIndex);
-    finalColors[name] = Object.fromEntries(finalShades)
+    finalColors[name] = lerpColor(shades, { lerpEnds, interval, mode });
   }
 
   return finalColors;
 };
 
-module.exports = lerpColors;
+module.exports = {
+  lerpColor,
+  lerpColors,
+};
