@@ -40,7 +40,7 @@ As a convenience, there is a `includeBase` property which can be passed into the
 Also, if you rely on some of Tailwind's legacy color names (`lightBlue`, `warmGray`, `trueGray`, `coolGray`, `blueGray`), you can enable the `includeLegacy` property by setting it to `true` to include those legacy colors as well, though it's recommended by the Tailwind team to alias those legacy color names directly in your Tailwind config and not rely on Tailwind's `require('tailwindcss/colors')` to add those for you, as that will produce a warning. More info on that can be found on the offical Tailwind CSS website [here](https://tailwindcss.com/docs/upgrade-guide#renamed-gray-scales).
 ```js
 // tailwind.config.js
-const lerpColors = require('tailwind-lerp-colors');
+const { lerpColors } = require('tailwind-lerp-colors');
 
 module.exports = {
   theme: {
