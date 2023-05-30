@@ -38,6 +38,8 @@ As a convenience, there is a `includeBase` property which can be passed into the
 As a convenience, there is a `includeBase` property which can be passed into the `options` (though it's enabled by default) which automatically imports Tailwind's base colors so you don't need to pass them in manually.
 
 Also, if you rely on some of Tailwind's legacy color names (`lightBlue`, `warmGray`, `trueGray`, `coolGray`, `blueGray`), you can enable the `includeLegacy` property by setting it to `true` to include those legacy colors as well, though it's recommended by the Tailwind team to alias those legacy color names directly in your Tailwind config and not rely on Tailwind's `require('tailwindcss/colors')` to add those for you, as that will produce a warning. More info on that can be found on the offical Tailwind CSS website [here](https://tailwindcss.com/docs/upgrade-guide#renamed-gray-scales).
+
+If you want to interpolate a group of named colors, use the `lerpColors` (plural) function like this:
 ```js
 // tailwind.config.js
 const { lerpColors } = require('tailwind-lerp-colors');
@@ -45,7 +47,7 @@ const { lerpColors } = require('tailwind-lerp-colors');
 module.exports = {
   theme: {
     colors: lerpColors({
-      // your colors
+      coral: coralShades,
     }, {
       // function options (all optional)
       includeBase: true,
@@ -57,6 +59,26 @@ module.exports = {
   },
 }
 ```
+
+If you want to interpolate a single color, use the `lerpColor` (singular) function like this:
+```js
+// tailwind.config.js
+const { lerpColor } = require('tailwind-lerp-colors');
+
+module.exports = {
+  theme: {
+    colors: {
+      coral: lerpColor(coralShades, {
+        lerpEnds: true,
+        interval: 25,
+        mode: 'lrgb',
+      }),
+    }
+  },
+}
+```
+
+ℹ️ One important distinction here between the options for `lerpColors` and `lerpColor` is that `includeBase` and `includeLegacy` are not available for `lerpColor` as it's only interpolating a single color, so there's no need to include the base colors.
 
 ## Usage
 `tailwind-lerp-colors` works without using any options, so if you're good with the default options (listed below in the "Advanced usage" example), this should work for you:
