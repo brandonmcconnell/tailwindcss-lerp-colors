@@ -14,7 +14,7 @@ const validColorModes = [
   'hsl',
   'hsv',
   'oklab',
-]
+] as const
 
 export type Options = {
   includeBase?: boolean

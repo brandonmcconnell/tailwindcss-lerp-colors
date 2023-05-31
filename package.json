@@ -2,11 +2,12 @@
   "name": "tailwind-lerp-colors",
   "version": "1.1.6",
   "description": "Interpolate between defined colors in Tailwind config for additional color stops",
-  "main": "./dist/esm/index.js",
+  "main": "./dist/cjs/index.js",
+  "files": ["dist"],
   "publishConfig": {
     "access": "public"
   },
-  "type": "module",
+  "type": "commonjs",
   "prettier": {
     "printWidth": 100,
     "semi": false,
@@ -59,11 +60,11 @@
     "typescript": "^5.0.4"
   },
   "exports":{
-    "./*": {
-      "types": "./dist/types/index.d.ts",
-      "require": "./dist/cjs/index.js",
-      "import": "./dist/esm/index.js",
-      "default": "./dist/esm/index.js"
-    }
-  }
+    "types": "./dist/types/index.d.ts",
+    "require": "./dist/cjs/index.js",
+    "import": "./dist/esm/index.js",
+    "default": "./dist/esm/index.js",
+    "node": "./dist/cjs/index.js"
+  } 
+  
 }
