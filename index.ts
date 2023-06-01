@@ -1,6 +1,19 @@
 import chroma, { InterpolationMode } from 'chroma-js'
 import builtInColors from 'tailwindcss/colors'
 
+function keys<T extends object>(obj: T): (keyof T)[] {
+  return Object.keys(obj) as (keyof T)[];
+}
+
+function entries<T extends object>(obj: T): [keyof T, T[keyof T]][] {
+  return Object.entries(obj) as [keyof T, T[keyof T]][];
+}
+
+function hasOwn<T extends object>(obj: T, key: keyof T): key is keyof T {
+  return Object.prototype.hasOwnProperty.call(obj, key)
+}
+
+// valid color modes for chroma-js
 const validColorModes = [
   'rgb',
   'lab',
@@ -16,39 +29,49 @@ const validColorModes = [
   'oklab',
 ] as const
 
-export type Options = {
+// types for tailwind-lerp-colors
+type NumericObjKey = number | `${number}`
+type Shades = Record<NumericObjKey, string>
+type Colors = Record<string, Shades>
+type ColorMode = typeof validColorModes[number];
+type Options = {
   includeBase?: boolean
   includeLegacy?: boolean
   lerpEnds?: boolean
   interval?: number
-  mode?: (typeof validColorModes)[number]
+  mode?: ColorMode
 }
+type OptionName = keyof Options;
+type Option<T extends OptionName> = Options[T];
+type SingularOptions = Pick<Options, 'lerpEnds' | 'interval' | 'mode'>
 
-type Shades = {
-  [key: number]: string
-}
-
-const defaultLerpOptions: Required<Pick<Options, 'lerpEnds' | 'interval' | 'mode'>> = {
+// default options for tailwind-lerp-colors -> lerpColor
+const defaultSingleOptions: Required<SingularOptions> = {
   lerpEnds: true,
   interval: 25,
   mode: 'lrgb',
 }
 
-const isOptionInvalid = (
+// default options for tailwind-lerp-colors -> lerpColors
+const defaultOptions = {
+  includeBase: true,
+  includeLegacy: false,
+  ...defaultSingleOptions,
+}
+
+const isOptionInvalid = <T extends OptionName>(
   options: Options,
-  optionName: keyof Options,
-  test: (k: Options[keyof Options]) => boolean
+  optionName: T,
+  test: (k: Option<T>) => boolean
 ) => {
-  return Object.prototype.hasOwnProperty.call(options, optionName) && !test(options[optionName])
+  return options && hasOwn(options, optionName) && !test(options[optionName])
 }
 
 const throwError = (message: string) => {
   throw new Error(message)
 }
 
-export const lerpColor = (shades: Shades, options: Options = {}) => {
-  const defaultOptions = defaultLerpOptions
-
+export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
   if (isOptionInvalid(options, 'lerpEnds', (v) => typeof v === 'boolean'))
     throwError('tailwind-lerp-colors option `lerpEnds` must be a boolean.')
 
@@ -68,8 +91,8 @@ export const lerpColor = (shades: Shades, options: Options = {}) => {
     )
 
   const { lerpEnds, interval, mode } = {
-    ...defaultOptions,
-    ...options,
+    ...defaultSingleOptions,
+    ...(options ?? {}),
   }
 
   const sortByNumericFirstIndex = (
@@ -85,7 +108,7 @@ export const lerpColor = (shades: Shades, options: Options = {}) => {
     typeof shades === 'string' ||
     Array.isArray(shades) ||
     shades.toString() !== '[object Object]' ||
-    !Object.keys(shades).every((key) => {
+    !keys(shades).every((key) => {
       return !isNaN(+key)
     })
   ) {
@@ -94,7 +117,7 @@ export const lerpColor = (shades: Shades, options: Options = {}) => {
         JSON.stringify(shades, null, 2)
     )
   }
-  const shadesArray = Object.entries(shades)
+  const shadesArray = entries(shades)
     .map(([numericStringKey, color]) => {
       return [Number(numericStringKey), color] as [number, string]
     })
@@ -126,18 +149,10 @@ export const lerpColor = (shades: Shades, options: Options = {}) => {
 }
 
 export const lerpColors = (
-  colorsObj: {
-    [index: string]: Shades
-  } = {},
+  colorsObj: Colors = {},
   options: Options = {}
 ) => {
   const legacyNames = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray']
-
-  const defaultOptions = {
-    includeBase: true,
-    includeLegacy: false,
-    ...defaultLerpOptions,
-  }
 
   if (isOptionInvalid(options, 'includeBase', (v) => typeof v === 'boolean'))
     throwError('tailwind-lerp-colors option `includeBase` must be a boolean.')
@@ -148,35 +163,32 @@ export const lerpColors = (
     ...defaultOptions,
     ...options,
   }
-  const baseColors: {
-    [key: string]: Shades
-  } = {}
+  const baseColors: Colors = {}
   if (includeBase) {
-    for (const key of Object.keys(builtInColors)) {
+    const builtInColorKeys = keys(builtInColors);
+    for (const key of builtInColorKeys) {
       if (!legacyNames.includes(key) || includeLegacy) {
-        baseColors[key] = builtInColors[key as keyof typeof builtInColors]
+        baseColors[key] = builtInColors[key]
       }
     }
   }
-  const initialColors = Object.entries({
+  const initialColors = entries({
     ...baseColors,
     ...colorsObj,
   })
 
-  const finalColors: {
-    [index: string]: Shades
-  } = {}
+  const finalColors: Colors = {}
 
   for (const [name, shades] of initialColors) {
     if (['null', 'undefined'].includes(typeof shades) || !shades.toString) {
       continue
     }
-    finalColors[name] = shades
+    finalColors[`${name}`] = shades
     if (
       typeof shades === 'string' ||
       Array.isArray(shades) ||
       shades.toString() !== '[object Object]' ||
-      !Object.keys(shades).every((key) => {
+      !keys(shades).every((key) => {
         return !isNaN(+key)
       })
     ) {
@@ -186,4 +198,14 @@ export const lerpColors = (
   }
 
   return finalColors
+}
+
+export type {
+  Shades as LerpColorsShades,
+  Colors as LerpColorsColors,
+  ColorMode as LerpColorsColorMode,
+  Options as LerpColorsOptions,
+  OptionName as LerpColorsOptionName,
+  Option as LerpColorsOption,
+  SingularOptions as LerpColorsSingularOptions,
 }
