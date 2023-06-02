@@ -3,7 +3,9 @@
   "version": "1.1.6",
   "description": "Interpolate between defined colors in Tailwind config for additional color stops",
   "main": "./dist/cjs/index.js",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "publishConfig": {
     "access": "public"
   },
@@ -50,15 +52,16 @@
     "@typescript-eslint/eslint-plugin": "^5.59.8",
     "@typescript-eslint/parser": "^5.59.8",
     "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.0.4"
   },
-  "exports":{
+  "exports": {
     "types": "./dist/types/index.d.ts",
     "require": "./dist/cjs/index.js",
     "import": "./dist/esm/index.js",
     "default": "./dist/esm/index.js",
     "node": "./dist/cjs/index.js"
-  } 
-  
+  }
 }
