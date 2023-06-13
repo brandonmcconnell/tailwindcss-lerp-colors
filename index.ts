@@ -14,7 +14,7 @@ function hasOwn<T extends object>(obj: T, key: keyof T): key is keyof T {
 }
 
 // valid color modes for chroma-js
-const validColorModes = [
+export const validColorModes = [
   'rgb',
   'lab',
   'lch',
@@ -32,7 +32,7 @@ const validColorModes = [
 // types for tailwind-lerp-colors
 type NumericObjKey = number | `${number}`;
 type Shades = Record<NumericObjKey, string>;
-type Colors = Record<string, Shades>;
+type Colors = Record<string, Shades | string>;
 type ColorMode = (typeof validColorModes)[number];
 type Options = {
   includeBase?: boolean;
@@ -67,17 +67,44 @@ const throwError = (message: string) => {
   throw new Error(message);
 };
 
+const isValidShade = (shades: Shades) => {
+  if (
+    // undefined or null
+    shades == null ||
+    // check if shades is an object
+    typeof shades !== 'object' ||
+    // check if shades is an array
+    Array.isArray(shades) ||
+    shades.toString() !== '[object Object]' ||
+    !keys(shades).every((key) => {
+      return !isNaN(+key);
+    })
+  ) {
+    return false;
+  }
+  return true;
+};
+
 export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
+  // validate lerpEnds
   if (isOptionInvalid(options, 'lerpEnds', (v) => typeof v === 'boolean'))
     throwError('tailwind-lerp-colors option `lerpEnds` must be a boolean.');
 
+  // validate interval
   if (isOptionInvalid(options, 'interval', (v) => Number.isInteger(v) && typeof v === 'number' && v > 0))
     throwError('tailwind-lerp-colors option `interval` must be a positive integer greater than 0.');
+
+  // validate mode
   if (isOptionInvalid(options, 'mode', (v) => typeof v === 'string' && validColorModes.includes(v)))
     throwError(
       `tailwind-lerp-colors option \`mode\` must be one of the following values: ${validColorModes.join(', ')}.`
     );
 
+  if (!isValidShade(shades))
+    throwError(
+      'tailwind-lerp-colors object `shades` must be an object with numeric keys.\n\nvalue used: ' +
+        JSON.stringify(shades, null, 2)
+    );
   const { lerpEnds, interval, mode } = {
     ...defaultSingleOptions,
     ...(options ?? {}),
@@ -87,26 +114,12 @@ export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
     return numericKeyA - numericKeyB;
   };
 
-  if (
-    ['null', 'undefined'].includes(typeof shades) ||
-    !shades.toString ||
-    typeof shades === 'string' ||
-    Array.isArray(shades) ||
-    shades.toString() !== '[object Object]' ||
-    !keys(shades).every((key) => {
-      return !isNaN(+key);
-    })
-  ) {
-    throwError(
-      'tailwind-lerp-colors object `shades` must be an object with numeric keys.\n\nvalue used: ' +
-        JSON.stringify(shades, null, 2)
-    );
-  }
   const shadesArray = entries(shades)
     .map(([numericStringKey, color]) => {
       return [Number(numericStringKey), color] as [number, string];
     })
     .sort(sortByNumericFirstIndex);
+
   if (lerpEnds) {
     shadesArray.unshift([0, '#ffffff']);
     shadesArray.push([1000, '#000000']);
@@ -134,12 +147,15 @@ export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
 };
 
 export const lerpColors = (colorsObj: Colors = {}, options: Options = {}) => {
-  const legacyNames = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray'];
-
+  // validate includeBase
   if (isOptionInvalid(options, 'includeBase', (v) => typeof v === 'boolean'))
     throwError('tailwind-lerp-colors option `includeBase` must be a boolean.');
+
+  // validate includeLegacy
   if (isOptionInvalid(options, 'includeLegacy', (v) => typeof v === 'boolean'))
     throwError('tailwind-lerp-colors option `includeLegacy` must be a boolean.');
+
+  const legacyNames = ['lightBlue', 'warmGray', 'trueGray', 'coolGray', 'blueGray'];
 
   const { includeBase, includeLegacy, lerpEnds, interval, mode } = {
     ...defaultOptions,
@@ -154,6 +170,7 @@ export const lerpColors = (colorsObj: Colors = {}, options: Options = {}) => {
       }
     }
   }
+
   const initialColors = entries({
     ...baseColors,
     ...colorsObj,
@@ -162,20 +179,14 @@ export const lerpColors = (colorsObj: Colors = {}, options: Options = {}) => {
   const finalColors: Colors = {};
 
   for (const [name, shades] of initialColors) {
-    if (['null', 'undefined'].includes(typeof shades) || !shades.toString) {
-      continue;
-    }
     finalColors[`${name}`] = shades;
-    if (
-      typeof shades === 'string' ||
-      Array.isArray(shades) ||
-      shades.toString() !== '[object Object]' ||
-      !keys(shades).every((key) => {
-        return !isNaN(+key);
-      })
-    ) {
+
+    // some shades from tailwind base colors are not objects;
+    // skip those
+    if (!isValidShade(shades)) {
       continue;
     }
+
     finalColors[name] = lerpColor(shades, { lerpEnds, interval, mode });
   }
 
