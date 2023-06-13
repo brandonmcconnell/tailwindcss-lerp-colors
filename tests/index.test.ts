@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { lerpColor, lerpColors, validColorModes } from '../index';
 import defaultTailwindColors from 'tailwindcss/colors';
-import { COLOR_MODES_MOCK_DATA } from './mockData';
+import { COLOR_MODES_MOCK_DATA } from './__mocks__/mockData';
 
 describe('lerpColor', () => {
   // error handling
