@@ -204,4 +204,11 @@ While you can always support me via [Buy Me a Coffee](https://buymeacoffee.com/b
 Also, while I developed this function, much of the ✨magic✨ working behind the scenes runs on Chroma.js, built by [Gregor Aisch](https://github.com/gka) and contributed to by many! Chroma.js is an incredible tool that powers much of the crazy color interactions you see on the web, so definitely pay the [Chroma.js repo](https://github.com/gka/chroma.js) a visit.
 
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[MIT](https://github.com/brandonmcconnell/tailwind-lerp-colors/blob/main/LICENSE/)
+
+## Recommendations
+
+If you liked this, you might also like my other Tailwind CSS plugins:
+* [multitool-for-tailwindcss](https://github.com/brandonmcconnell/multitool-for-tailwindcss): Group utilities together by variant
+* [jstool-for-tailwindcss](https://github.com/brandonmcconnell/jstool-for-tailwindcss): Effortless build-time JS script injection
+* [tailwindcss-directional-shadows](https://github.com/brandonmcconnell/tailwindcss-directional-shadows): Supercharge your shadow utilities with added directional support (includes directional `shadow-border` utilities too ✨)
