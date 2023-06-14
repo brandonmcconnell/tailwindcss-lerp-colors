@@ -2,6 +2,15 @@
 
 <div align="center"><b>&#8220;Lerp&#8221;</b> = <b>(L)</b>inear Int<b>(erp)</b>olation</div><br />
 
+<div align="center">
+
+[![minified size](https://img.shields.io/bundlephobia/min/tailwind-lerp-colors)](https://bundlephobia.com/package/tailwind-lerp-colors)
+[![license](https://img.shields.io/github/license/brandonmcconnell/tailwind-lerp-colors?label=license)](https://github.com/brandonmcconnell/tailwind-lerp-colors/blob/main/LICENSE.txt)
+[![version](https://img.shields.io/npm/v/tailwind-lerp-colors)](https://www.npmjs.com/package/tailwind-lerp-colors)
+[![twitter](https://img.shields.io/twitter/follow/branmcconnell)](https://twitter.com/branmcconnell)
+
+</div>
+
 **Tailwind Lerp Colors** programnatically interpolates between any default and extended colors in a Tailwind config for additional color stops (e.g. `red-425`, `gray-950`).
 
 <img src="https://dreamthinkbuild.com/tailwind-lerp-colors/tlc-readme-graphic.png" alt="" width="500" height="auto" /><br />
