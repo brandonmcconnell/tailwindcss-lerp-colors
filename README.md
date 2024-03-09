@@ -209,6 +209,7 @@ Also, while I developed this function, much of the ✨magic✨ working behind th
 ## Recommendations
 
 If you liked this, you might also like my other Tailwind CSS plugins:
-* [multitool-for-tailwindcss](https://github.com/brandonmcconnell/multitool-for-tailwindcss): Group utilities together by variant
-* [jstool-for-tailwindcss](https://github.com/brandonmcconnell/jstool-for-tailwindcss): Effortless build-time JS script injection
+* [tailwindcss-selector-patterns](https://github.com/brandonmcconnell/tailwindcss-selector-patterns): Dynamic CSS selector patterns
+* [tailwindcss-multitool](https://github.com/brandonmcconnell/tailwindcss-multitool): Group utilities together by variant
+* [tailwindcss-jstool](https://github.com/brandonmcconnell/tailwindcss-jstool): Effortless build-time JS script injection
 * [tailwindcss-directional-shadows](https://github.com/brandonmcconnell/tailwindcss-directional-shadows): Supercharge your shadow utilities with added directional support (includes directional `shadow-border` utilities too ✨)
