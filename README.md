@@ -5,7 +5,7 @@
 <div align="center">
 
 [![minified size](https://img.shields.io/bundlephobia/min/tailwind-lerp-colors)](https://bundlephobia.com/package/tailwind-lerp-colors)
-[![license](https://img.shields.io/github/license/brandonmcconnell/tailwind-lerp-colors?label=license)](https://github.com/brandonmcconnell/tailwind-lerp-colors/blob/main/LICENSE.txt)
+[![license](https://img.shields.io/github/license/brandonmcconnell/tailwind-lerp-colors?label=license)](https://github.com/brandonmcconnell/tailwind-lerp-colors/blob/main/LICENSE)
 [![version](https://img.shields.io/npm/v/tailwind-lerp-colors)](https://www.npmjs.com/package/tailwind-lerp-colors)
 [![twitter](https://img.shields.io/twitter/follow/branmcconnell)](https://twitter.com/branmcconnell)
 
@@ -209,6 +209,7 @@ Also, while I developed this function, much of the ✨magic✨ working behind th
 ## Recommendations
 
 If you liked this, you might also like my other Tailwind CSS plugins:
+* [tailwindcss-default-shades](https://github.com/brandonmcconnell/tailwindcss-default-shades): Default shades for simpler color utility classes
 * [tailwindcss-selector-patterns](https://github.com/brandonmcconnell/tailwindcss-selector-patterns): Dynamic CSS selector patterns
 * [tailwindcss-multitool](https://github.com/brandonmcconnell/tailwindcss-multitool): Group utilities together by variant
 * [tailwindcss-jstool](https://github.com/brandonmcconnell/tailwindcss-jstool): Effortless build-time JS script injection
