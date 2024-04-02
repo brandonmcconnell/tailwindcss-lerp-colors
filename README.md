@@ -11,7 +11,7 @@
 
 </div>
 
-**Tailwind Lerp Colors** programnatically interpolates between any default and extended colors in a Tailwind config for additional color stops (e.g. `red-425`, `gray-950`).
+**Tailwind Lerp Colors** programmatically interpolates between any default and extended colors in a Tailwind config for additional color stops (e.g. `red-425`, `gray-950`).
 
 <img src="https://dreamthinkbuild.com/tailwind-lerp-colors/tlc-readme-graphic.png" alt="" width="500" height="auto" /><br />
 
@@ -41,12 +41,12 @@ Install the function from npm:
 npm i -D tailwind-lerp-colors
 ```
 
-Then add the function to your `tailwind.config.js` file. It's recommended to use `tailwind-lerp-colors` in `theme.colors` and NOT `theme.extend.colors` as the function will only interpolate colors passed into its object, and using `theme.extend.colors` generally implies you're relying on leaving `theme.colors` as-is to keep the standard Tailwind colors. That route, the standard colors would not be interpolate dalong with your custom colors.
+Then add the function to your `tailwind.config.js` file. It's recommended to use `tailwind-lerp-colors` in `theme.colors` and NOT `theme.extend.colors` as the function will only interpolate colors passed into its object, and using `theme.extend.colors` generally implies you're relying on leaving `theme.colors` as-is to keep the standard Tailwind colors. That route, the standard colors would not be interpolated along with your custom colors.
 
 As a convenience, there is a `includeBase` property which can be passed into the `options` (though it's enabled by default) which automate importing Tailwind's base colors, so you do not need to pass them in manually. 
 As a convenience, there is a `includeBase` property which can be passed into the `options` (though it's enabled by default) which automatically imports Tailwind's base colors so you don't need to pass them in manually.
 
-Also, if you rely on some of Tailwind's legacy color names (`lightBlue`, `warmGray`, `trueGray`, `coolGray`, `blueGray`), you can enable the `includeLegacy` property by setting it to `true` to include those legacy colors as well, though it's recommended by the Tailwind team to alias those legacy color names directly in your Tailwind config and not rely on Tailwind's `require('tailwindcss/colors')` to add those for you, as that will produce a warning. More info on that can be found on the offical Tailwind CSS website [here](https://tailwindcss.com/docs/upgrade-guide#renamed-gray-scales).
+Also, if you rely on some of Tailwind's legacy color names (`lightBlue`, `warmGray`, `trueGray`, `coolGray`, `blueGray`), you can enable the `includeLegacy` property by setting it to `true` to include those legacy colors as well, though it's recommended by the Tailwind team to alias those legacy color names directly in your Tailwind config and not rely on Tailwind's `require('tailwindcss/colors')` to add those for you, as that will produce a warning. More info on that can be found on the official Tailwind CSS website [here](https://tailwindcss.com/docs/upgrade-guide#renamed-gray-scales).
 
 If you want to interpolate a group of named colors, use the `lerpColors` (plural) function like this:
 ```js
@@ -132,7 +132,7 @@ Every option in the options object is entirely optional and falls back to its re
 
   If this setting is disabled, the function will only interpolate colors explicitly listed in your Tailwind config.
 
-* `includeLegacy` (`boolean`) will include Tailwind's legacy color names (`lightBlue`, `warmGray`, `trueGray`, `coolGray`, `blueGray`) in the final colors output by `tailwind-lerp-colors`. As mentioned above, it's recommended by the Tailwind team to alias those legacy color names directly in your Tailwind config and not rely on Tailwind's `require('tailwindcss/colors')` to add those for you, as that will produce a warning. More info on that can be found on the offical Tailwind CSS website [here](https://tailwindcss.com/docs/upgrade-guide#renamed-gray-scales).
+* `includeLegacy` (`boolean`) will include Tailwind's legacy color names (`lightBlue`, `warmGray`, `trueGray`, `coolGray`, `blueGray`) in the final colors output by `tailwind-lerp-colors`. As mentioned above, it's recommended by the Tailwind team to alias those legacy color names directly in your Tailwind config and not rely on Tailwind's `require('tailwindcss/colors')` to add those for you, as that will produce a warning. More info on that can be found on the official Tailwind CSS website [here](https://tailwindcss.com/docs/upgrade-guide#renamed-gray-scales).
   
   ** *`includeBase` must be set to true in order for `includeLegacy` to work*
 
