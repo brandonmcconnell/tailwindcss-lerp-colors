@@ -1,4 +1,4 @@
-<h1 align="center">Tailwind Lerp Colors</h1>
+<h1 align="center">Lerp Colors for Tailwind CSS</h1>
 
 <div align="center"><b>&#8220;Lerp&#8221;</b> = <b>(L)</b>inear Int<b>(erp)</b>olation</div><br />
 
@@ -209,6 +209,7 @@ Also, while I developed this function, much of the ✨magic✨ working behind th
 ## Recommendations
 
 If you liked this, you might also like my other Tailwind CSS plugins:
+* [tailwindcss-signals](https://github.com/brandonmcconnell/tailwindcss-signals): Declarative API for applying styles based on parent or ancestor state
 * [tailwindcss-default-shades](https://github.com/brandonmcconnell/tailwindcss-default-shades): Default shades for simpler color utility classes
 * [tailwindcss-selector-patterns](https://github.com/brandonmcconnell/tailwindcss-selector-patterns): Dynamic CSS selector patterns
 * [tailwindcss-multitool](https://github.com/brandonmcconnell/tailwindcss-multitool): Group utilities together by variant
