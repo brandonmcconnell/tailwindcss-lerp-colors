@@ -151,3 +151,8 @@ const lerpColors = (colorsObj = {}, options = {}) => {
     return finalColors;
 };
 exports.lerpColors = lerpColors;
+module.exports = {
+    validColorModes: exports.validColorModes,
+    lerpColor: exports.lerpColor,
+    lerpColors: exports.lerpColors,
+};

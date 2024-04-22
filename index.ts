@@ -202,3 +202,9 @@ export type {
   Option as LerpColorsOption,
   SingularOptions as LerpColorsSingularOptions,
 };
+
+module.exports = {
+  validColorModes,
+  lerpColor,
+  lerpColors,
+};
