@@ -1,5 +1,6 @@
 import chroma, { InterpolationMode } from 'chroma-js';
-import builtInColors from 'tailwindcss/colors';
+
+import builtInColors from 'tailwindcss/colors.js';
 
 function keys<T extends object>(obj: T): (keyof T)[] {
   return Object.keys(obj) as (keyof T)[];
@@ -126,8 +127,11 @@ export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
   }
   const finalShades = [...shadesArray];
   for (let i = 0; i < shadesArray.length - 1; i++) {
-    const [shade, color] = shadesArray[i];
-    const [nextShade, nextColor] = shadesArray[i + 1];
+    const [shade, color] = shadesArray[i] ?? [];
+    const [nextShade, nextColor] = shadesArray[i + 1] ?? [];
+    if (!shade || !color || !nextShade || !nextColor) {
+      continue;
+    }
 
     // check to make sure both shades being compared
     // are evenly divisible by the set interval
