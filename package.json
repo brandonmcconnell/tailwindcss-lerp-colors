@@ -1,6 +1,6 @@
 {
   "name": "tailwindcss-lerp-colors",
-  "version": "1.2.16",
+  "version": "1.2.17",
   "description": "Interpolate between defined colors in Tailwind config for additional color stops",
   "type": "module",
   "source": "index.ts",
