@@ -77,9 +77,7 @@ const isValidShade = (shades: Shades) => {
     // check if shades is an array
     Array.isArray(shades) ||
     shades.toString() !== '[object Object]' ||
-    !keys(shades).every((key) => {
-      return !isNaN(+key);
-    })
+    !keys(shades).some((key) => !isNaN(+key) && +key >= 0 && +key <= 1000)
   ) {
     return false;
   }
@@ -103,8 +101,11 @@ export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
 
   if (!isValidShade(shades))
     throwError(
-      'tailwind-lerp-colors object `shades` must be an object with numeric keys.\n\nvalue used: ' +
-        JSON.stringify(shades, null, 2)
+      `tailwind-lerp-colors object \`shades\` must be an object with numeric keys.\n\nvalue used: ${JSON.stringify(
+        shades,
+        null,
+        2
+      )}`
     );
   const { lerpEnds, interval, mode } = {
     ...defaultSingleOptions,
@@ -115,20 +116,26 @@ export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
     return numericKeyA - numericKeyB;
   };
 
-  const shadesArray = entries(shades)
-    .map(([numericStringKey, color]) => {
-      return [Number(numericStringKey), color] as [number, string];
+  const namedShades: Record<string, string> = {};
+  const numericShades = entries(shades)
+    .flatMap(([key, color]) => {
+      const numericShade = +key;
+      if (isNaN(numericShade)) {
+        namedShades[key] = color;
+        return [];
+      }
+      return [[numericShade, color]] as [[number, string]];
     })
     .sort(sortByNumericFirstIndex);
 
   if (lerpEnds) {
-    shadesArray.unshift([0, '#ffffff']);
-    shadesArray.push([1000, '#000000']);
+    if (numericShades[0]?.[0] !== 0) numericShades.unshift([0, '#ffffff']);
+    if (numericShades.slice(-1)[0]?.[0] !== 1000) numericShades.push([1000, '#000000']);
   }
-  const finalShades = [...shadesArray];
-  for (let i = 0; i < shadesArray.length - 1; i++) {
-    const [shade, color] = shadesArray[i] ?? [];
-    const [nextShade, nextColor] = shadesArray[i + 1] ?? [];
+  const finalShades = [...numericShades];
+  for (let i = 0; i < numericShades.length - 1; i++) {
+    const [shade, color] = numericShades[i] ?? [];
+    const [nextShade, nextColor] = numericShades[i + 1] ?? [];
     if (!shade || !color || !nextShade || !nextColor) {
       continue;
     }
@@ -147,7 +154,10 @@ export const lerpColor = (shades: Shades, options: SingularOptions = {}) => {
   }
   finalShades.sort(sortByNumericFirstIndex);
 
-  return Object.fromEntries(finalShades);
+  return {
+    ...Object.fromEntries(finalShades),
+    ...namedShades,
+  };
 };
 
 export const lerpColors = (colorsObj: Colors = {}, options: Options = {}) => {
@@ -183,14 +193,9 @@ export const lerpColors = (colorsObj: Colors = {}, options: Options = {}) => {
   const finalColors: Colors = {};
 
   for (const [name, shades] of initialColors) {
-    finalColors[`${name}`] = shades;
-
-    // some shades from tailwind base colors are not objects;
-    // skip those
     if (!isValidShade(shades)) {
-      continue;
+      finalColors[name] = shades;
     }
-
     finalColors[name] = lerpColor(shades, { lerpEnds, interval, mode });
   }
 
