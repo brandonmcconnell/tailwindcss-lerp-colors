@@ -1,5 +1,6 @@
 import chroma, { InterpolationMode } from 'chroma-js';
 
+import { DefaultColors } from 'tailwindcss/types/generated/colors.d.js';
 import builtInColors from 'tailwindcss/colors.js';
 
 function keys<T extends object>(obj: T): (keyof T)[] {
@@ -31,9 +32,8 @@ export const validColorModes = [
 ] as const;
 
 // types for tailwind-lerp-colors
-type NumericObjKey = number | `${number}`;
-type Shades = Record<NumericObjKey, string>;
-type Colors = Record<string, Shades | string>;
+type Shades = Exclude<Record<string, string> | DefaultColors[keyof DefaultColors], string>;
+type Colors = Record<string, Shades | string> | DefaultColors;
 type ColorMode = (typeof validColorModes)[number];
 type Options = {
   includeBase?: boolean;
@@ -68,7 +68,7 @@ const throwError = (message: string) => {
   throw new Error(message);
 };
 
-const isValidShade = (shades: Shades) => {
+const isValidShade = (shades: Shades | string): shades is Shades => {
   if (
     // undefined or null
     shades == null ||
@@ -195,8 +195,9 @@ export const lerpColors = (colorsObj: Colors = {}, options: Options = {}) => {
   for (const [name, shades] of initialColors) {
     if (!isValidShade(shades)) {
       finalColors[name] = shades;
+    } else {
+      finalColors[name] = lerpColor(shades, { lerpEnds, interval, mode });
     }
-    finalColors[name] = lerpColor(shades, { lerpEnds, interval, mode });
   }
 
   return finalColors;
